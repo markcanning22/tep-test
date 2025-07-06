@@ -1,5 +1,10 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import { app } from './app';
+
+const app = async (fastify: FastifyInstance) => {
+  fastify.get('/', (request, reply) => {
+    reply.send({ message: 'Hello API' });
+  });
+};
 
 describe('GET /', () => {
   let server: FastifyInstance;
