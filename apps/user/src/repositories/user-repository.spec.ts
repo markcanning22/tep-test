@@ -1,5 +1,6 @@
 import { createUser, getUserById, getUsers } from './user-repository';
 import { NewUser } from '../types';
+import { ValidationError } from '../exceptions/validation-error-exception';
 
 describe('User repository', () => {
   it('should persist a new user', async () => {
@@ -26,7 +27,7 @@ describe('User repository', () => {
       firstName: 'Mark',
       lastName: 'Canning',
       password: 'changeme123',
-      email: 'mark@supplyant.com',
+      email: 'mark2@supplyant.com',
       type: 'teacher',
     };
 
@@ -46,5 +47,19 @@ describe('User repository', () => {
     const users = getUsers();
 
     expect(users.length).toEqual(2);
+  });
+
+  it('should throw validation error if email exists', async () => {
+    const newUser: NewUser = {
+      firstName: 'Mark',
+      lastName: 'Canning',
+      password: 'changeme123',
+      email: 'mark@supplyant.com',
+      type: 'teacher',
+    };
+
+    await expect(createUser(newUser)).rejects.toThrow(
+      new ValidationError(`User with email ${newUser.email} already exists`)
+    );
   });
 });
