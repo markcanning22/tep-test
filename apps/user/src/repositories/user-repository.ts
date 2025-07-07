@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { hashPassword } from '../helpers/hash-password';
 import { NewUser, User } from '../types';
 import { ValidationError } from '../exceptions/validation-error-exception';
+import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 
 const users: User[] = [];
 
@@ -32,4 +33,14 @@ export const getUserById = (id: string): User | undefined => {
 
 export const getUserByEmail = (email: string): User | undefined => {
   return users.find((user) => user.email === email);
+};
+
+export const deleteUserById = (id: string): void => {
+  const index = users.findIndex((user) => user.id === id);
+
+  if (index === -1) {
+    throw new UserNotFoundException(`User with ID ${id} does not exist`);
+  }
+
+  users.splice(index, 1);
 };

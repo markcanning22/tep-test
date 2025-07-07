@@ -1,4 +1,9 @@
-import { createUser, getUserById, getUsers } from './user-repository';
+import {
+  createUser,
+  deleteUserById,
+  getUserById,
+  getUsers,
+} from './user-repository';
 import { NewUser } from '../types';
 import { ValidationError } from '../exceptions/validation-error-exception';
 
@@ -61,5 +66,21 @@ describe('User repository', () => {
     await expect(createUser(newUser)).rejects.toThrow(
       new ValidationError(`User with email ${newUser.email} already exists`)
     );
+  });
+
+  it('should delete a user', async () => {
+    const newUser: NewUser = {
+      firstName: 'Mark',
+      lastName: 'Canning',
+      password: 'changeme123',
+      email: 'mark3@supplyant.com',
+      type: 'teacher',
+    };
+
+    const createdUser = await createUser(newUser);
+
+    deleteUserById(createdUser.id);
+
+    expect(getUserById(createdUser.id)).toBeUndefined();
   });
 });
