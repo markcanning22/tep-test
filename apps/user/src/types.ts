@@ -9,3 +9,7 @@ export type User = {
 };
 
 export type NewUser = Omit<User, 'id' | 'createdAt'>;
+
+export type ErrorMessage = {
+  error: string;
+};
