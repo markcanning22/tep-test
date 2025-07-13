@@ -1193,6 +1193,11 @@
   resolved "https://registry.yarnpkg.com/@fastify/autoload/-/autoload-6.0.3.tgz#5c96169fae0fdf7d5d36f12e9e701d66c0fbc96b"
   integrity sha512-/wM2pmI7jP2fGah3YuP14i9vuaijpD4gQYLiyd+eD7gUxpA3B4R6/0QIXQS2eJaYD9aIX4ZFRzPmrZsaetfcWw==
 
+"@fastify/aws-lambda@^5.1.4":
+  version "5.1.4"
+  resolved "https://registry.yarnpkg.com/@fastify/aws-lambda/-/aws-lambda-5.1.4.tgz#a19b4ffe9e915056ae16755d015713c247ca6f68"
+  integrity sha512-ExyaFMcEJXyUnYktzs5ww/5iDI8LcXMiIMnYZW6aavSIu+W0d08bJhvw8ShHL9wsRrRvfH+BOLdUEVB8oQ4Rew==
+
 "@fastify/error@^4.0.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@fastify/error/-/error-4.2.0.tgz#d40f46ba75f541fdcc4dc276b7308bbc8e8e6d7a"

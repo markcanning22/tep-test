@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "User API Stack"
+
+Parameters:
+  UserApiLambdaEnvironment:
+    Description: User API Lambda environment
+    Type: String
+
+  UserApiGatewayStageName:
+    Description: User API gateway stage name
+    Type: String
+
+Resources:
+  UserApiLambdaLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/UserApiLambda
+      LogGroupClass: STANDARD
+      RetentionInDays: 90
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  UserApiLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: UserApiLambdaExecutionRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: UserApiLambdaPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt UserApiLambdaLogGroup.Arn
+
+  UserApiLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: UserApiLambda
+      Runtime: nodejs20.x
+      Handler: lambda.handler
+      Role: !GetAtt UserApiLambdaRole.Arn
+      Code:
+        ZipFile: // User API
+      Timeout: 30
+      Environment:
+        Variables:
+          NODE_ENV: !Ref UserApiLambdaEnvironment
+
+  UserApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: User API
+
+  UserApiGatewayRootMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId: !Ref UserApiGateway
+      ResourceId: !GetAtt UserApiGateway.RootResourceId
+      HttpMethod: ANY
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ""
+          - - !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/
+            - !GetAtt UserApiLambda.Arn
+            - /invocations
+
+  UserApiGatewayResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref UserApiGateway
+      ParentId: !GetAtt UserApiGateway.RootResourceId
+      PathPart: "{proxy+}"
+
+  UserApiGatewayMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      RestApiId: !Ref UserApiGateway
+      ResourceId: !Ref UserApiGatewayResource
+      HttpMethod: ANY
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS_PROXY
+        Uri: !Join
+          - ""
+          - - !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/
+            - !GetAtt UserApiLambda.Arn
+            - /invocations
+
+  UserApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref UserApiGateway
+      StageName: !Ref UserApiGatewayStageName
+    DependsOn: UserApiGatewayMethod
+
+  UserApiLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref UserApiLambda
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join
+        - ""
+        - - !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${UserApiGateway}
+          - /*/*/{proxy+}

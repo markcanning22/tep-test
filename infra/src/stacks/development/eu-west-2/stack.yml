@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "TEP Test Dev Stack"
+
+Resources:
+  UserApiStack:
+    Type: AWS::CloudFormation::Stack
+    Description: User API stack
+    Properties:
+      TemplateURL: ./templates/user-api-stack.yml
+      Parameters:
+        UserApiLambdaEnvironment: development
+        UserApiGatewayStageName: development
