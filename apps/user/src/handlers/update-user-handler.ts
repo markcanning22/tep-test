@@ -5,6 +5,8 @@ import { ValidationError } from '../exceptions/validation-error-exception';
 
 export const updateUserHandlerOptions = () => ({
   schema: {
+    summary: 'Updates an existing user',
+    tags: ['Users'],
     body: {
       type: 'object',
       properties: {

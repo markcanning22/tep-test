@@ -5,6 +5,8 @@ import { ValidationError } from '../exceptions/validation-error-exception';
 
 export const createUserHandlerOptions = () => ({
   schema: {
+    summary: 'Creates a new user',
+    tags: ['Users'],
     body: {
       type: 'object',
       required: ['firstName', 'lastName', 'email', 'password', 'type'],

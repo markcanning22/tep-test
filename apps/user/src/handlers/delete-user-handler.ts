@@ -4,6 +4,8 @@ import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 
 export const deleteUserHandlerOptions = () => ({
   schema: {
+    summary: 'Deletes an existing user',
+    tags: ['Users'],
     response: {
       200: {},
     },

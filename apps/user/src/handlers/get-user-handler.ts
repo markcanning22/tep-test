@@ -3,6 +3,8 @@ import { getUserById } from '../repositories/user-repository';
 
 export const getUserHandlerOptions = () => ({
   schema: {
+    summary: 'Retrieves a single user by ID',
+    tags: ['Users'],
     response: {
       200: {
         type: 'object',

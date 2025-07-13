@@ -1,14 +1,21 @@
 import { initFastifyServer } from '@tep-test/fastify-server';
-
-const host = process.env.HOST ?? 'localhost';
-const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-
 import { app } from './app';
+import { getConfig } from '@tep-test/config';
 
 (async () => {
+  const config = getConfig();
+
   await initFastifyServer({
     app,
-    host,
-    port,
+    config,
+    swaggerOptions: {
+      openapi: {
+        info: {
+          title: 'TEP Test API',
+          description: 'API documentation for TEP Test',
+          version: '1.0.0',
+        },
+      },
+    },
   });
 })();

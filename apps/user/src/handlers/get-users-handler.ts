@@ -3,6 +3,8 @@ import { getUsers } from '../repositories/user-repository';
 
 export const getUsersHandlerOptions = () => ({
   schema: {
+    summary: 'Retrieves all users',
+    tags: ['Users'],
     response: {
       200: {
         type: 'array',
