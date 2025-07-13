@@ -2,6 +2,8 @@ import Fastify, { FastifyInstance, FastifyPluginAsync } from 'fastify';
 import { fastifySwagger, SwaggerOptions } from '@fastify/swagger';
 import { fastifySwaggerUi } from '@fastify/swagger-ui';
 import { Config } from '@tep-test/config';
+import { fastifyHelmet } from '@fastify/helmet';
+import { fastifySensible } from '@fastify/sensible';
 
 type InitFastifyServerOptions = {
   app: FastifyPluginAsync;
@@ -15,6 +17,9 @@ export const initFastifyServer = async ({
   swaggerOptions,
 }: InitFastifyServerOptions): Promise<FastifyInstance> => {
   const fastify = Fastify({ logger: true });
+
+  fastify.register(fastifySensible);
+  fastify.register(fastifyHelmet);
 
   if (config.environment === 'local' || config.environment === 'development') {
     fastify.log.info('Swagger enabled');
