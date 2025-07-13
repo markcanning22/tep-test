@@ -30,6 +30,7 @@
           }
         },
         "configurations": {
+          "local": {},
           "development": {
             "main": "apps/user/src/lambda.ts",
             "esbuildOptions": {
@@ -52,7 +53,7 @@
       "serve": {
         "continuous": true,
         "executor": "@nx/js:node",
-        "defaultConfiguration": "development",
+        "defaultConfiguration": "local",
         "dependsOn": [
           "build"
         ],
@@ -61,6 +62,9 @@
           "runBuildTargetDependencies": false
         },
         "configurations": {
+          "local": {
+            "buildTarget": "@tep-test/user:build:local"
+          },
           "development": {
             "buildTarget": "@tep-test/user:build:development"
           },
