@@ -3,6 +3,7 @@ import {
   deleteUserById,
   getUserById,
   getUsers,
+  updateUser,
 } from './user-repository';
 import { NewUser } from '../types';
 import { ValidationError } from '../exceptions/validation-error-exception';
@@ -82,5 +83,31 @@ describe('User repository', () => {
     deleteUserById(createdUser.id);
 
     expect(getUserById(createdUser.id)).toBeUndefined();
+  });
+
+  it('should update an existing user', async () => {
+    const newUser: NewUser = {
+      firstName: 'Mark',
+      lastName: 'Canning',
+      password: 'changeme123',
+      email: 'mark3@supplyant.com',
+      type: 'teacher',
+    };
+
+    const createdUser = await createUser(newUser);
+
+    const updatedUser = await updateUser(createdUser.id, {
+      type: 'student',
+    });
+
+    expect(updatedUser).toStrictEqual({
+      ...createdUser,
+      type: 'student',
+    });
+
+    expect(updatedUser).not.toBe({
+      ...createdUser,
+      type: 'teacher',
+    });
   });
 });

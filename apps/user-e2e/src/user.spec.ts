@@ -164,4 +164,22 @@ describe('Users', () => {
     expect(response.status).toBe(200);
     testUserIds.push(response.data.id);
   });
+
+  it('should update user', async () => {
+    const createdUser = await axios.post<User>('/users', testUser);
+    testUserIds.push(createdUser.data.id);
+
+    const updatedUser = await axios.patch<User>(
+      `/users/${createdUser.data.id}`,
+      {
+        type: 'student',
+      }
+    );
+
+    expect(updatedUser.status).toBe(200);
+    expect(updatedUser.data).toStrictEqual({
+      ...createdUser.data,
+      type: 'student',
+    });
+  });
 });

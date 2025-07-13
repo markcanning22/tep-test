@@ -9,6 +9,7 @@ export type User = {
 };
 
 export type NewUser = Omit<User, 'id' | 'createdAt'>;
+export type UpdatedUser = Partial<Omit<User, 'id' | 'createdAt'>>;
 
 export type ErrorMessage = {
   error: string;
