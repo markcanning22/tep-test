@@ -17,6 +17,10 @@ To run the dev server:
 npx nx run user:serve:local
 ```
 
+You can then access the application at http://localhost:3000.
+
+You can access the docs via http://localhost:3000/docs.
+
 ### Tests
 
 To run all tests:
@@ -31,10 +35,6 @@ To run E2E tests
 npx nx run-many -t e2e
 ```
 
-You can then access the application at http://localhost:3000.
-
-You can access the docs via http://localhost:3000/docs.
-
 ## Improvements
 
 - Improve the API feedback (the default Fastify errors are not always user-friendly).
@@ -44,3 +44,5 @@ You can access the docs via http://localhost:3000/docs.
 - Complete CI/CD pipeline with automatic deployments to AWS
 - Complete AWS lambda deployment script
 - Add CORS
+- Clean up my commits
+- Configure pino logger for better logging (env and app names, mapping of log levels)
