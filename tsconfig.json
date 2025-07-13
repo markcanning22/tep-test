@@ -11,6 +11,9 @@
     },
     {
       "path": "./libs/fastify-server"
+    },
+    {
+      "path": "./libs/config"
     }
   ]
 }

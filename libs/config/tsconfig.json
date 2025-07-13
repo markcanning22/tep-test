@@ -4,13 +4,7 @@
   "include": [],
   "references": [
     {
-      "path": "../../libs/config"
-    },
-    {
-      "path": "../../libs/fastify-server"
-    },
-    {
-      "path": "./tsconfig.app.json"
+      "path": "./tsconfig.lib.json"
     },
     {
       "path": "./tsconfig.spec.json"

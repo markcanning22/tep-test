@@ -19,6 +19,9 @@
   ],
   "references": [
     {
+      "path": "../../libs/config/tsconfig.lib.json"
+    },
+    {
       "path": "../../libs/fastify-server/tsconfig.lib.json"
     }
   ]
