@@ -182,4 +182,47 @@ describe('Users', () => {
       type: 'student',
     });
   });
+
+  it('should be able to search for a user by first name', async () => {
+    const user = await axios.post<User>('/users', testUser);
+    const user2 = await axios.post<User>('/users', {
+      ...testUser,
+      email: 'mark2@supplyant.com',
+      firstName: 'James',
+    });
+    testUserIds.push(user.data.id);
+    testUserIds.push(user2.data.id);
+
+    const fetchedUser = await axios.get<User[]>(`/users?firstName=Mark`);
+
+    expect(fetchedUser.data[0].firstName).toBe('Mark');
+    expect(fetchedUser.data.length).toBe(1);
+  });
+
+  it('should not be able to delete user if they were created 2 weeks ago', async () => {
+    const createdUser = await axios.post<User>('/users', {
+      ...testUser,
+      email: 'fakeCreatedAt@supplyant.com',
+    });
+
+    await expect(
+      axios.delete(`/users/${createdUser.data.id}`)
+    ).rejects.toMatchObject({
+      response: {
+        status: 400,
+        data: {
+          error:
+            'User is too recent to be deleted. Users can only be deleted after 2 weeks of creation.',
+        },
+      },
+    });
+  });
+
+  it('should be able to delete user if they were created less than 2 weeks ago', async () => {
+    const createdUser = await axios.post<User>('/users', testUser);
+
+    const response = await axios.delete(`/users/${createdUser.data.id}`);
+
+    expect(response.status).toBe(200);
+  });
 });

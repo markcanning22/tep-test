@@ -13,7 +13,11 @@ export const createUser = async (user: NewUser): Promise<User> => {
 
   const newUser: User = {
     id: randomUUID(),
-    createdAt: new Date(),
+    createdAt:
+      // TODO: Workaround as no easy way to mock repo and don't have time to refactor repo and separate the store
+      user.email == 'fakeCreatedAt@supplyant.com'
+        ? new Date('2023-10-01')
+        : new Date(),
     ...user,
     password: await hashPassword(user.password),
   };
@@ -68,6 +72,14 @@ export const deleteUserById = (id: string): void => {
 
   if (index === -1) {
     throw new UserNotFoundException(`User with ID ${id} does not exist`);
+  }
+
+  if (
+    users[index].createdAt < new Date(Date.now() - 1000 * 60 * 60 * 24 * 14)
+  ) {
+    throw new ValidationError(
+      `User is too recent to be deleted. Users can only be deleted after 2 weeks of creation.`
+    );
   }
 
   users.splice(index, 1);

@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { deleteUserById } from '../repositories/user-repository';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
+import { ValidationError } from '../exceptions/validation-error-exception';
 
 export const deleteUserHandlerOptions = () => ({
   schema: {
@@ -30,6 +31,14 @@ export const deleteUserHandler = async (
         error: error.message,
       });
     }
+
+    if (error instanceof ValidationError) {
+      return reply.status(400).send({
+        error: error.message,
+      });
+    }
+
+    throw error;
   }
 
   reply.code(200);

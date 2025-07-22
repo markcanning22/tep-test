@@ -85,6 +85,24 @@ describe('User repository', () => {
     expect(getUserById(createdUser.id)).toBeUndefined();
   });
 
+  it('should not be able to delete a user more than 2 weeks ago', async () => {
+    const newUser: NewUser = {
+      firstName: 'Mark',
+      lastName: 'Canning',
+      password: 'changeme123',
+      email: 'fakeCreatedAt@supplyant.com',
+      type: 'teacher',
+    };
+
+    const createdUser = await createUser(newUser);
+
+    expect(() => deleteUserById(createdUser.id)).toThrow(
+      new ValidationError(
+        'User is too recent to be deleted. Users can only be deleted after 2 weeks of creation.'
+      )
+    );
+  });
+
   it('should update an existing user', async () => {
     const newUser: NewUser = {
       firstName: 'Mark',
