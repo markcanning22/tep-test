@@ -23,7 +23,7 @@ const testUserIds: string[] = [];
 afterEach(() => {
   testUserIds.forEach(async (userId) => {
     try {
-      await axios.delete(`/users/${userId}`);
+      await axios.delete(`/users/${userId}`).catch((error) => void 0);
       testUserIds.splice(testUserIds.indexOf(userId), 1);
     } catch (error) {
       console.warn(`Failed to delete test user with ID ${userId}:`, error);
@@ -183,27 +183,12 @@ describe('Users', () => {
     });
   });
 
-  it('should be able to search for a user by first name', async () => {
-    const user = await axios.post<User>('/users', testUser);
-    const user2 = await axios.post<User>('/users', {
-      ...testUser,
-      email: 'mark2@supplyant.com',
-      firstName: 'James',
-    });
-    testUserIds.push(user.data.id);
-    testUserIds.push(user2.data.id);
-
-    const fetchedUser = await axios.get<User[]>(`/users?firstName=Mark`);
-
-    expect(fetchedUser.data[0].firstName).toBe('Mark');
-    expect(fetchedUser.data.length).toBe(1);
-  });
-
   it('should not be able to delete user if they were created 2 weeks ago', async () => {
     const createdUser = await axios.post<User>('/users', {
       ...testUser,
       email: 'fakeCreatedAt@supplyant.com',
     });
+    testUserIds.push(createdUser.data.id);
 
     await expect(
       axios.delete(`/users/${createdUser.data.id}`)
@@ -220,9 +205,25 @@ describe('Users', () => {
 
   it('should be able to delete user if they were created less than 2 weeks ago', async () => {
     const createdUser = await axios.post<User>('/users', testUser);
+    testUserIds.push(createdUser.data.id);
 
     const response = await axios.delete(`/users/${createdUser.data.id}`);
 
     expect(response.status).toBe(200);
+  });
+
+  it('should return matching users when filtering by first name', async () => {
+    const createdUser1 = await axios.post<User>('/users', testUser);
+    const createdUser2 = await axios.post<User>('/users', {
+      ...testUser,
+      firstName: 'James',
+      email: 'james@supplyant.com',
+    });
+    testUserIds.push(createdUser1.data.id, createdUser2.data.id);
+
+    const response = await axios.get<User[]>(`/users?filters[firstName]=Mark`);
+
+    expect(response.data).toContainEqual(createdUser1.data);
+    expect(response.data).not.toContainEqual(createdUser2.data);
   });
 });

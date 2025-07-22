@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { hashPassword } from '../helpers/hash-password';
-import { NewUser, UpdatedUser, User } from '../types';
+import { Filters, NewUser, UpdatedUser, User } from '../types';
 import { ValidationError } from '../exceptions/validation-error-exception';
 import { UserNotFoundException } from '../exceptions/user-not-found-exception';
 
@@ -55,7 +55,32 @@ export const updateUser = async (
   return updatedUser;
 };
 
-export const getUsers = (): User[] => {
+export const getUsers = (filters: Filters): User[] => {
+  if (filters) {
+    const filteredUsers: User[] = [];
+
+    const filterableFields: (keyof Filters)[] = [
+      'firstName',
+      'lastName',
+      'email',
+      'type',
+    ];
+
+    filterableFields.forEach((field) => {
+      if (filters[field]) {
+        const filterValue = filters[field].toLowerCase();
+
+        const usersByField = users.filter((user) =>
+          user[field].toLowerCase().includes(filterValue)
+        );
+
+        filteredUsers.push(...usersByField);
+      }
+    });
+
+    return filteredUsers;
+  }
+
   return users;
 };
 

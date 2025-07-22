@@ -4,6 +4,7 @@ import { fastifySwaggerUi } from '@fastify/swagger-ui';
 import { Config } from '@tep-test/config';
 import { fastifyHelmet } from '@fastify/helmet';
 import { fastifySensible } from '@fastify/sensible';
+import * as qs from 'qs';
 
 type InitFastifyServerOptions = {
   app: FastifyPluginAsync;
@@ -16,7 +17,10 @@ export const initFastifyServer = async ({
   config,
   swaggerOptions,
 }: InitFastifyServerOptions): Promise<FastifyInstance> => {
-  const fastify = Fastify({ logger: true });
+  const fastify = Fastify({
+    logger: true,
+    querystringParser: (str) => qs.parse(str),
+  });
 
   fastify.register(fastifySensible);
   fastify.register(fastifyHelmet);

@@ -1,5 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getUsers } from '../repositories/user-repository';
+import { Filters } from '../types';
 
 export const getUsersHandlerOptions = () => ({
   schema: {
@@ -24,11 +25,17 @@ export const getUsersHandlerOptions = () => ({
   },
 });
 
+type GetUsersRequest = FastifyRequest<{
+  Querystring: {
+    filters: Filters;
+  };
+}>;
+
 export const getUsersHandler = async (
-  _: FastifyRequest,
+  request: GetUsersRequest,
   reply: FastifyReply
 ) => {
-  const users = getUsers();
+  const users = getUsers(request.query.filters);
 
   reply.send(users);
 };

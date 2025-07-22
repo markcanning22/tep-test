@@ -14,3 +14,7 @@ export type UpdatedUser = Partial<Omit<User, 'id' | 'createdAt'>>;
 export type ErrorMessage = {
   error: string;
 };
+
+export type FilterableFields = 'firstName' | 'lastName' | 'email' | 'type';
+
+export type Filters = Record<FilterableFields, string>;
